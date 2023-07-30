@@ -1,0 +1,16 @@
+name: einstein
+channels:
+  - conda-forge
+dependencies:
+  - pip
+  - python=3.9
+  - jupyter
+  - numpy
+  - matplotlib
+  - pandas
+  - pytorch
+  - scikit-learn 
+  - opencv
+  - pillow
+  - pip:
+     - -r requirements.txt
