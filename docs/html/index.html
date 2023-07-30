@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Moonshot: Automatic Impact Crater Detection on the Moon &#8212; Moonshot  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="moonshot-automatic-impact-crater-detection-on-the-moon">
+<h1>Moonshot: Automatic Impact Crater Detection on the Moon<a class="headerlink" href="#moonshot-automatic-impact-crater-detection-on-the-moon" title="Permalink to this heading">¶</a></h1>
+<section id="synopsis">
+<h2>Synopsis:<a class="headerlink" href="#synopsis" title="Permalink to this heading">¶</a></h2>
+<p>Impact craters are the most ubiquitous surface feature on rocky
+planetary bodies. Crater number density can be used to estimate the
+age of the surface: the more densely cratered the terrain, the older
+the surface. When independent absolute ages for a surface are
+available for calibration of crater counts, as is the case for some
+lava flows and regions of the Moon, crater density can be used to
+estimate an absolute age of the surface.</p>
+<p>Crater detection and counting has traditionally been done by laborious
+manual interrogation of images of a planetary surface taken by
+orbiting spacecraft. However,
+the size frequency distribution of impact craters is a steep negative
+power-law, implying that there are many small craters for each larger
+one. For example, for each 1-km crater on Mars, there are more than
+a thousand 100-m craters. With the increased fidelity
+of cameras on orbiting spacecraft, the number of craters visible in
+images of remote surfaces has become so large that manual counting is
+unfeasible. Furthermore, manual counting can be time consuming and
+subjective.
+This motivates the need for automated crater detection and counting algorithms.</p>
+</section>
+<section id="task-definition">
+<h2>Task definition<a class="headerlink" href="#task-definition" title="Permalink to this heading">¶</a></h2>
+<p>The aim of this project is to develop a software tool for automatically detecting impact craters in images of planetary surfaces and deriving from this a crater-size frequency distribution that can be used for dating.
+The whole project can be separated into three main subtasks.</p>
+<section id="crater-detection-model">
+<h3>Crater Detection Model<a class="headerlink" href="#crater-detection-model" title="Permalink to this heading">¶</a></h3>
+<p>Develop a module for automatically locating craters
+in images based on YOLO. Then, train and test the CDM with a dataset of images of the surface of Mars, taken by the THEMIS camera (100-m/px),
+together with labels that provide the bounding boxes of any craters in
+the image larger than ~1-2 km in diameter.</p>
+</section>
+<section id="develop-a-training-dateset-for-the-moon">
+<h3>Develop a training dateset for the Moon<a class="headerlink" href="#develop-a-training-dateset-for-the-moon" title="Permalink to this heading">¶</a></h3>
+<p>A training dataset is needed to train the crater detection model for moon. To develop this dataset we have been provided with four images of
+portions of the lunar surface and a csv file containing the location
+and size of all manually counted craters on this part of the Moon with the parts of the crater database.</p>
+<p>The four images provided are for the regions:</p>
+<ul class="simple">
+<li><p>A: -180 to -90 longitude, -45 to 0 latitude;</p></li>
+<li><p>B: -180 to -90 longitude, 0 to 45 latitude;</p></li>
+<li><p>C: -90 to 0 longitude, -45 to 0 latitude;</p></li>
+<li><p>D: -90 to 0 longitude, 0 to 45 latitude.</p></li>
+</ul>
+</section>
+<section id="a-tool-for-analysis-of-craters">
+<h3>A tool for analysis of craters<a class="headerlink" href="#a-tool-for-analysis-of-craters" title="Permalink to this heading">¶</a></h3>
+<p>The purpose of this tool is to allow a user to quickly and
+automatically identify all craters in the image and from this generate
+a size-frequency distribution of the craters for the purpose of dating
+the planetary surface. It provides the
+functionality to calculate physical, real-world crater sizes and
+locations if the image location, size and resolution is provided and identify craters in each image, as
+well as the number of true positives and false negatives.</p>
+</section>
+</section>
+</section>
+<section id="model-performance-metric">
+<h1>Model Performance metric<a class="headerlink" href="#model-performance-metric" title="Permalink to this heading">¶</a></h1>
+<p>We will calculate the Intersection over Union
+index (IoU) for every crater bounding box in your model detection set
+against every crater in our ground truth crater bounding box list</p>
+<p>We will then pair each bounding box <span class="math notranslate nohighlight">\(g_i\)</span> in the ground truth list with a
+detected crater, <span class="math notranslate nohighlight">\(c_i\)</span> in your list, with the pairings chosen to
+maximise the sum <span class="math notranslate nohighlight">\(\sum_i \textrm{IoU}(g_i, c_i)\)</span></p>
+<p>We will calculate a crater recall index using the formula</p>
+<div class="math notranslate nohighlight">
+\[R=\frac{\textrm{number of crater pairs with IoU&gt;0.5 and area of }g_i&gt;A_R}{\textrm{number of ground truth bounding boxes with area of }g_i&gt;A_R}\]</div>
+<p>where <span class="math notranslate nohighlight">\(A_R\)</span> is the fractional area of the image that corresponds to a crater size <span class="math notranslate nohighlight">\(D_R\)</span>.</p>
+<p>We calculate a crater precision index using the formula</p>
+<div class="math notranslate nohighlight">
+\[P=\frac{\textrm{number of crater pairs with IoU&gt;0.5 and area of }c_i&gt;A_P}{\textrm{number of detected bounding boxes with area of }c_i&gt;A_P},\]</div>
+<p>where <span class="math notranslate nohighlight">\(A_P\)</span> is the fractional area of the image that corresponds to a crater size
+<span class="math notranslate nohighlight">\(D_P\)</span>.</p>
+<p>Finally we will calculate the crater $F1$ score via the usual formula</p>
+<div class="math notranslate nohighlight">
+\[F1 =\frac{2}{\frac{1}{P}+\frac{1}{R}}.\]</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Moonshot</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
